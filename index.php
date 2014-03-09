@@ -10,7 +10,22 @@
  * License    GNU GPL v3 or later
  */
 
-$path = '/home/mthomas';
+
+/**
+ * Create first char grouped array of source files
+ */
+
+$source = array();
+foreach (array_filter(glob('*'), 'is_file') as $file)
+{
+	echo "$file size " . filesize($file) . "\n";
+	$source[substr($file, 0, 1)][$file] = __DIR__ . '/' . $file;
+
+}
+
+echo print_r($source, true);
+
+$path = __DIR__ . '/foo';
 
 /**
  * Get all files in target dir
@@ -19,23 +34,36 @@ $time_start = microtime(true);
 $i = null;
 $files = null;
 $dirs = null;
-$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST );
+$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
 foreach ($objects as $object)
 {
 	$i++;
 	if (!$object->isDir())
 	{
-		//echo "Object: $object\n";
-        $files++;
-	}else
-    {
-    $dirs++;
-    }
+		$files++;
+
+		/**
+		 * Check for match
+		 */
+		$filename = $object->getFileName();
+		if (array_key_exists($filename, $source[substr($filename, 0, 1)]))
+		{
+			$path = str_replace($filename, '', $object->getPathName());
+
+			// Backup old file
+			rename($path . $filename, $path . $filename . '.bak');
+		}
+	}
+	else
+	{
+		$dirs++;
+	}
 }
 $time_end = microtime(true);
 $time = $time_end - $time_start;
 
 echo "Inspected $i objects, $files files and $dirs dirs, in $time seconds\n";
+
 /*
 $iterator = new FilesystemIterator(dirname(__FILE__), FilesystemIterator::CURRENT_AS_PATHNAME);
 foreach ($iterator as $fileinfo){
