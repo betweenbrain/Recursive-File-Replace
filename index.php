@@ -23,7 +23,7 @@ foreach (array_filter(glob('*'), 'is_file') as $file)
 
 }
 
-echo print_r($source, true);
+// echo print_r($source, true);
 
 $path = __DIR__ . '/foo';
 
@@ -52,6 +52,13 @@ foreach ($objects as $object)
 
 			// Backup old file
 			rename($path . $filename, $path . $filename . '.bak');
+
+			// Copy
+			if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+			{
+
+				unlink($path . $filename . '.bak');
+			}
 		}
 	}
 	else
@@ -63,6 +70,25 @@ $time_end = microtime(true);
 $time = $time_end - $time_start;
 
 echo "Inspected $i objects, $files files and $dirs dirs, in $time seconds\n";
+
+// http://stackoverflow.com/a/6564818/901680
+function chunked_copy($from, $to)
+{
+	# 1 meg at a time, you can adjust this.
+	$buffer_size = 1048576;
+	$ret         = 0;
+	$fin         = fopen($from, "rb");
+	$fout        = fopen($to, "w");
+	while (!feof($fin))
+	{
+		$ret += fwrite($fout, fread($fin, $buffer_size));
+		echo $ret . "\n";
+	}
+	fclose($fin);
+	fclose($fout);
+
+	return $ret; # return number of bytes written
+}
 
 /*
 $iterator = new FilesystemIterator(dirname(__FILE__), FilesystemIterator::CURRENT_AS_PATHNAME);
