@@ -28,6 +28,14 @@ if ($argc < 4 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
 	exit;
 endif;
 
+// Check that target isset and is a dir
+if($argv[1] == "-t" && isset($argv[2])){
+	if(!is_dir($argv[2])){
+		echo "$argv[2] does not exist!\n";
+		exit;
+	}
+}
+
 /**
  * Create array of source files grouped by first character
  */
