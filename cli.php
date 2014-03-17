@@ -62,7 +62,7 @@ $time_start = microtime(true);
 $i = null;
 $files = null;
 $dirs = null;
-$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), RecursiveIteratorIterator::SELF_FIRST);
+$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($argv[2]), RecursiveIteratorIterator::SELF_FIRST);
 foreach ($objects as $object)
 {
 	$i++;
