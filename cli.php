@@ -24,7 +24,7 @@ if ($argc < 4 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
 	-N   Do not perform file replacement, but instead ouput results to 'results.log'. Default behavior if not designated.
 
 	With the --help, -help, -h, or -? options, you can get this help.
-<?php
+	<?php
 	exit;
 endif;
 
@@ -73,14 +73,19 @@ if ($argv[1] == "-t" && isset($argv[2]))
 			{
 				$path = str_replace($filename, '', $object->getPathName());
 
-				// Backup old file
-				rename($path . $filename, $path . $filename . '.bak');
-
-				// Copy
-				if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+				if ($argv[3] == "-Y")
 				{
+					// Backup old file
+					rename($path . $filename, $path . $filename . '.bak');
 
-					unlink($path . $filename . '.bak');
+					// Copy
+					if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+					{
+
+						unlink($path . $filename . '.bak');
+					}
+				}else{
+					file_put_contents('result.log', $path . $filename . " matched\n");
 				}
 			}
 		}
