@@ -90,7 +90,7 @@ if ($argv[1] == "-t" && isset($argv[2]))
 					}
 					else
 					{
-						file_put_contents('result.log', $path . $filename . " matched\n");
+						file_put_contents('result.log', $path . $filename . " matched\n", FILE_APPEND);
 					}
 				}
 			}
