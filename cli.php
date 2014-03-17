@@ -29,75 +29,72 @@ if ($argc < 4 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
 endif;
 
 // Check that target isset and is a dir
-if($argv[1] == "-t" && isset($argv[2])){
-	if(!is_dir($argv[2])){
+if ($argv[1] == "-t" && isset($argv[2]))
+{
+	if (!is_dir($argv[2]))
+	{
 		echo "$argv[2] does not exist!\n";
 		exit;
 	}
-}
 
-/**
- * Create array of source files grouped by first character
- */
+	/**
+	 * Create array of source files grouped by first character
+	 */
 
-$source = array();
-foreach (array_filter(glob('*'), 'is_file') as $file)
-{
-	echo "$file size " . filesize($file) . "\n";
-	$source[substr($file, 0, 1)][$file] = __DIR__ . '/' . $file;
-
-}
-
-
-if($argv[1] == "-t" && isset($argv[2])){
-	echo $argv[2];
-}
-$path = __DIR__ . '/foo';
-
-/**
- * Get all files in target dir
- */
-
-$time_start = microtime(true);
-$i = null;
-$files = null;
-$dirs = null;
-$objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($argv[2]), RecursiveIteratorIterator::SELF_FIRST);
-foreach ($objects as $object)
-{
-	$i++;
-	if (!$object->isDir())
+	$source = array();
+	foreach (array_filter(glob('*'), 'is_file') as $file)
 	{
-		$files++;
+		echo "$file size " . filesize($file) . "\n";
+		$source[substr($file, 0, 1)][$file] = __DIR__ . '/' . $file;
 
-		/**
-		 * Check for match
-		 */
-		$filename = $object->getFileName();
-		if (array_key_exists($filename, $source[substr($filename, 0, 1)]))
+	}
+
+	/**
+	 * Get all files in target dir
+	 */
+
+	$time_start = microtime(true);
+	$i          = null;
+	$files      = null;
+	$dirs       = null;
+	$objects    = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($argv[2]), RecursiveIteratorIterator::SELF_FIRST);
+	foreach ($objects as $object)
+	{
+		$i++;
+		if (!$object->isDir())
 		{
-			$path = str_replace($filename, '', $object->getPathName());
+			$files++;
 
-			// Backup old file
-			rename($path . $filename, $path . $filename . '.bak');
-
-			// Copy
-			if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+			/**
+			 * Check for match
+			 */
+			$filename = $object->getFileName();
+			if (array_key_exists($filename, $source[substr($filename, 0, 1)]))
 			{
+				$path = str_replace($filename, '', $object->getPathName());
 
-				unlink($path . $filename . '.bak');
+				// Backup old file
+				rename($path . $filename, $path . $filename . '.bak');
+
+				// Copy
+				if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+				{
+
+					unlink($path . $filename . '.bak');
+				}
 			}
 		}
+		else
+		{
+			$dirs++;
+		}
 	}
-	else
-	{
-		$dirs++;
-	}
-}
-$time_end = microtime(true);
-$time = $time_end - $time_start;
+	$time_end = microtime(true);
+	$time     = $time_end - $time_start;
 
-echo "Inspected $i objects, $files files and $dirs dirs, in $time seconds\n";
+	echo "Inspected $i objects, $files files and $dirs dirs, in $time seconds\n";
+}
+
 
 // http://stackoverflow.com/a/6564818/901680
 function chunked_copy($from, $to)
