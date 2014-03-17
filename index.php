@@ -12,7 +12,7 @@
 
 
 /**
- * Create first char grouped array of source files
+ * Create array of source files grouped by first character
  */
 
 $source = array();
@@ -89,97 +89,3 @@ function chunked_copy($from, $to)
 
 	return $ret; # return number of bytes written
 }
-
-/*
-$iterator = new FilesystemIterator(dirname(__FILE__), FilesystemIterator::CURRENT_AS_PATHNAME);
-foreach ($iterator as $fileinfo){
-	$results[]=$fileinfo;
-}
-echo '<pre>Target: ' . print_r($results, true) . '</pre>';
-
-/**
- * Build multidimensional array of files
- *
- * @param DirectoryIterator $it
- *
- * @return array
- */
-/*
-function DirectoryIteratorToArray(DirectoryIterator $it)
-{
-	$result = array();
-	foreach ($it as $key => $child)
-	{
-		if ($child->isDot())
-		{
-			continue;
-		}
-		$name = $child->getBasename();
-		if ($child->isDir())
-		{
-			$subit         = new DirectoryIterator($child->getPathname());
-			$result[$name] = DirectoryIteratorToArray($subit);
-		}
-		else
-		{
-			$result[$name] = $child->getPathname();
-		}
-	}
-
-	return $result;
-}
-
-$files = DirectoryIteratorToArray(new DirectoryIterator($path));
-echo '<pre>Target: ' . print_r($files, true) . '</pre>';
-
-/**
- * Recursive array key exists
- *
- * @param $needle
- * @param $haystack
- *
- * @return bool
- */
-/*
-function array_key_exists_r($needle, $haystack)
-{
-	$result = array_key_exists($needle, $haystack);
-	if ($result)
-	{
-		return $result;
-	}
-	foreach ($haystack as $v)
-	{
-		if (is_array($v))
-		{
-			$result = array_key_exists_r($needle, $v);
-		}
-		if ($result)
-		{
-			return $result;
-		}
-	}
-
-	return $result;
-}
-
-/**
- * Glob of file in current dir
- */
-/*
-$iterator = new FilesystemIterator(dirname(__FILE__), FilesystemIterator::CURRENT_AS_PATHNAME);
-
-$result = array();
-foreach ($iterator as $fileinfo)
-{
-	if (!$iterator->isDir())
-	{
-		if (array_key_exists_r($iterator->getBasename(), $files))
-		{
-
-
-		}
-
-	}
-}
-*/
