@@ -68,24 +68,30 @@ if ($argv[1] == "-t" && isset($argv[2]))
 			/**
 			 * Check for match
 			 */
+
 			$filename = $object->getFileName();
-			if (array_key_exists($filename, $source[substr($filename, 0, 1)]))
+			if (array_key_exists(substr($filename, 0, 1), $source))
 			{
-				$path = str_replace($filename, '', $object->getPathName());
-
-				if ($argv[3] == "-Y")
+				if (array_key_exists($filename, $source[substr($filename, 0, 1)]))
 				{
-					// Backup old file
-					rename($path . $filename, $path . $filename . '.bak');
+					$path = str_replace($filename, '', $object->getPathName());
 
-					// Copy
-					if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+					if ($argv[3] == "-Y")
 					{
+						// Backup old file
+						rename($path . $filename, $path . $filename . '.bak');
 
-						unlink($path . $filename . '.bak');
+						// Copy
+						if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+						{
+
+							unlink($path . $filename . '.bak');
+						}
 					}
-				}else{
-					file_put_contents('result.log', $path . $filename . " matched\n");
+					else
+					{
+						file_put_contents('result.log', $path . $filename . " matched\n");
+					}
 				}
 			}
 		}
