@@ -13,7 +13,7 @@
 // PHP CLI only
 PHP_SAPI === 'cli' or die();
 
-if ($argc < 4 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
+if ($argc < 3 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
 
 	This is a command line PHP script to recursivley replace files from those in the current directory.
 
@@ -35,6 +35,8 @@ if ($argv[1] == "-d" && isset($argv[2]))
 		echo "$argv[2] does not exist!\n";
 		exit;
 	}
+
+	$helper = new Helper;
 
 	/**
 	 * Create array of source files grouped by first character
@@ -75,22 +77,20 @@ if ($argv[1] == "-d" && isset($argv[2]))
 				{
 					$path = str_replace($filename, '', $object->getPathName());
 
-					if ($argv[3] == "-Y")
+					if (isset($argv[3]) && ($argv[3] == "-Y"))
 					{
 						// Backup old file
 						rename($path . $filename, $path . $filename . '.bak');
 
 						// Copy
-						if (chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
+						if ($helper->chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
 						{
 
 							unlink($path . $filename . '.bak');
 						}
 					}
-					else
-					{
-						file_put_contents('result.log', $path . $filename . " matched\n", FILE_APPEND);
-					}
+
+					$helper->logResult($filename, $path);
 				}
 			}
 		}
@@ -106,21 +106,30 @@ if ($argv[1] == "-d" && isset($argv[2]))
 }
 
 
-// http://stackoverflow.com/a/6564818/901680
-function chunked_copy($from, $to)
+class Helper
 {
-	# 1 meg at a time, you can adjust this.
-	$buffer_size = 1048576;
-	$ret         = 0;
-	$fin         = fopen($from, "rb");
-	$fout        = fopen($to, "w");
-	while (!feof($fin))
-	{
-		$ret += fwrite($fout, fread($fin, $buffer_size));
-		echo $ret . "\n";
-	}
-	fclose($fin);
-	fclose($fout);
 
-	return $ret; # return number of bytes written
+// http://stackoverflow.com/a/6564818/901680
+	public function chunked_copy($from, $to)
+	{
+		# 1 meg at a time, you can adjust this.
+		$buffer_size = 1048576;
+		$ret         = 0;
+		$fin         = fopen($from, "rb");
+		$fout        = fopen($to, "w");
+		while (!feof($fin))
+		{
+			$ret += fwrite($fout, fread($fin, $buffer_size));
+			echo $ret . "\n";
+		}
+		fclose($fin);
+		fclose($fout);
+
+		return $ret; # return number of bytes written
+	}
+
+	public function logResult($filename, $path)
+	{
+		file_put_contents('result.log', $path . $filename . " matched\n", FILE_APPEND);
+	}
 }
