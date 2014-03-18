@@ -45,9 +45,7 @@ if ($argv[1] == "-d" && isset($argv[2]))
 	$source = array();
 	foreach (array_filter(glob('*'), 'is_file') as $file)
 	{
-		echo "$file size " . filesize($file) . "\n";
 		$source[substr($file, 0, 1)][$file] = __DIR__ . '/' . $file;
-
 	}
 
 	/**
@@ -82,7 +80,7 @@ if ($argv[1] == "-d" && isset($argv[2]))
 						// Backup old file
 						rename($path . $filename, $path . $filename . '.bak');
 
-						// Copy
+						// Copy and unlink backup file only if file sizes match
 						if ($helper->chunked_copy($source[substr($filename, 0, 1)][$filename], $path . $filename) === filesize($source[substr($filename, 0, 1)][$filename]))
 						{
 
