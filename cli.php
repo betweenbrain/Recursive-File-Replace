@@ -130,6 +130,6 @@ class Helper
 
 	public function logResult($filename, $path)
 	{
-		file_put_contents('result.log', $path . $filename . " matched\n", FILE_APPEND);
+		file_put_contents('result.log', '[' . date("Y-m-d H:i:s") . '] Matched: ' . $path . $filename . "\n", FILE_APPEND);
 	}
 }
