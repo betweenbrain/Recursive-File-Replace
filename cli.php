@@ -17,11 +17,10 @@ if ($argc < 4 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
 
 	This is a command line PHP script to recursivley replace files from those in the current directory.
 
-	Usage: <?php echo $argv[0]; ?> [-t] '/home/foo/bar' [-Y|-N]
+	Usage: <?php echo $argv[0]; ?> [-d] '/home/foo/bar' [-Y]
 
-	-t   Full path of the directory to recursively search for files to replace.
-	-Y   Perform file replacement.
-	-N   Do not perform file replacement, but instead ouput results to 'results.log'. Default behavior if not designated.
+	-d   Full path of the directory to recursively search for files to replace.
+	-Y   Perform file replacement. Will only log matches if not designated.
 
 	With the --help, -help, -h, or -? options, you can get this help.
 	<?php
@@ -29,7 +28,7 @@ if ($argc < 4 || in_array($argv[1], array('--help', '-help', '-h', '-?'))) : ?>
 endif;
 
 // Check that target isset and is a dir
-if ($argv[1] == "-t" && isset($argv[2]))
+if ($argv[1] == "-d" && isset($argv[2]))
 {
 	if (!is_dir($argv[2]))
 	{
