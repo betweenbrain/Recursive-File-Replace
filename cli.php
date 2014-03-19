@@ -60,7 +60,7 @@ if ($argv[1] == "-d" && isset($argv[2]))
 	foreach ($objects as $object)
 	{
 		$i++;
-		if (!$object->isDir())
+		if (!$object->isDir() && (date("Y-m-d", filemtime($object)) == '2013-08-06'))
 		{
 			$files++;
 
