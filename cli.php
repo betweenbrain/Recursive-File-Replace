@@ -59,7 +59,17 @@ if ($argv[1] == "-d" && isset($argv[2]))
 	$objects    = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($argv[2]), RecursiveIteratorIterator::SELF_FIRST);
 	foreach ($objects as $object)
 	{
+		// Counters
 		$i++;
+		if (!$object->isDir())
+		{
+			$files++;
+		}
+		else
+		{
+			$dirs++;
+		}
+
 		if (!$object->isDir() && (date("Y-m-d", filemtime($object)) == '2013-08-06'))
 		{
 			$files++;
@@ -94,10 +104,6 @@ if ($argv[1] == "-d" && isset($argv[2]))
 					$helper->logResult($filename, $path);
 				}
 			}
-		}
-		else
-		{
-			$dirs++;
 		}
 	}
 	$time_end = microtime(true);
