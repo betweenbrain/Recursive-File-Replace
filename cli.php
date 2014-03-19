@@ -69,12 +69,15 @@ if ($argv[1] == "-d" && isset($argv[2]))
 			 */
 
 			$filename = $object->getFileName();
+			// Check if first char array even exists
 			if (array_key_exists(substr($filename, 0, 1), $source))
 			{
+				// Check if filename is in source array, proceed to move if it is
 				if (array_key_exists($filename, $source[substr($filename, 0, 1)]))
 				{
 					$path = str_replace($filename, '', $object->getPathName());
 
+					// Enforce flag to perform moving of file
 					if (isset($argv[3]) && ($argv[3] == "-Y"))
 					{
 						// Backup old file
